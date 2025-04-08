@@ -1,0 +1,60 @@
+### Star Wars API Test Requests
+### Use with VS Code REST Client extension or similar tools
+
+@baseUrl = http://localhost:8080
+
+### Get all characters
+GET {{baseUrl}}/api/characters
+Accept: application/json
+
+### Get a specific character by ID
+GET {{baseUrl}}/api/characters/1
+Accept: application/json
+
+### Create a new character
+POST {{baseUrl}}/api/characters
+Content-Type: application/json
+
+{
+  "name": "Rey",
+  "species": "Human",
+  "homeworld": "Jakku",
+  "birth_year": "15 ABY",
+  "force_user": true
+}
+
+### Update an existing character
+PUT {{baseUrl}}/api/characters/1
+Content-Type: application/json
+
+{
+  "name": "Luke Skywalker",
+  "species": "Human",
+  "homeworld": "Tatooine",
+  "birth_year": "19 BBY",
+  "force_user": true
+}
+
+### Delete a character
+DELETE {{baseUrl}}/api/characters/11
+
+### Example curl commands for reference:
+
+# Get all characters
+# curl http://localhost:8080/api/characters
+
+# Get character by ID
+# curl http://localhost:8080/api/characters/1
+
+# Create new character
+# curl -X POST http://localhost:8080/api/characters \
+#   -H "Content-Type: application/json" \
+#   -d '{"name":"Rey","species":"Human","homeworld":"Jakku","birth_year":"15 ABY","force_user":true}'
+
+# Update character
+# curl -X PUT http://localhost:8080/api/characters/1 \
+#   -H "Content-Type: application/json" \
+#   -d '{"name":"Luke Skywalker","species":"Human","homeworld":"Tatooine","birth_year":"19 BBY","force_user":true}'
+
+# Delete character
+# curl -X DELETE http://localhost:8080/api/characters/11
