@@ -1,0 +1,49 @@
+@model ComicsCatalog.Models.Comic
+
+@{
+	ViewData["Title"] = "Comic Details";
+}
+
+<h1>Comic Details</h1>
+
+<div>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">Title</dt>
+		<dd class="col-sm-10">@Model.Title</dd>
+
+		<dt class="col-sm-2">Publisher</dt>
+		<dd class="col-sm-10">@Model.Publisher</dd>
+
+		<dt class="col-sm-2">Writer</dt>
+		<dd class="col-sm-10">@Model.Writer</dd>
+
+		<dt class="col-sm-2">Artist</dt>
+		<dd class="col-sm-10">@Model.Artist</dd>
+
+		<dt class="col-sm-2">Year</dt>
+		<dd class="col-sm-10">@Model.ReleaseYear</dd>
+
+		<dt class="col-sm-2">Issue Number</dt>
+		<dd class="col-sm-10">@Model.IssueNumber</dd>
+
+		@if (!string.IsNullOrEmpty(Model.Description))
+		{
+			<dt class="col-sm-2">Description</dt>
+			<dd class="col-sm-10">@Model.Description</dd>
+		}
+
+		@if (Model.Price.HasValue)
+		{
+			<dt class="col-sm-2">Price</dt>
+			<dd class="col-sm-10">$@Model.Price.Value.ToString("F2")</dd>
+		}
+
+		<dt class="col-sm-2">Date Added</dt>
+		<dd class="col-sm-10">@Model.DateAdded.ToString("yyyy-MM-dd")</dd>
+	</dl>
+</div>
+<div>
+	<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a> |
+	<a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
