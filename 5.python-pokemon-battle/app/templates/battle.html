@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Battle - Pokémon Battle Simulator</title>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+   <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+      <div class="container">
+         <a class="navbar-brand" href="/">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+               alt="PokéBall" class="nav-logo">
+            Pokémon Battle Simulator
+         </a>
+         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+               <li class="nav-item">
+                  <a class="nav-link" href="/">Home</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link active" href="/battle">Battle</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="/results">Results</a>
+               </li>
+            </ul>
+         </div>
+      </div>
+   </nav>
+
+   <div class="container mt-5">
+      <h1 class="text-center mb-4">Start Pokémon Battle</h1>
+
+      <div class="row">
+         <div class="col-md-6">
+            <div class="card mb-4">
+               <div class="card-header bg-primary text-white">
+                  <h5 class="card-title mb-0">Pokémon 1</h5>
+               </div>
+               <div class="card-body">
+                  <select id="pokemon1Select" class="form-select mb-3">
+                     <option value="">Select a Pokémon</option>
+                  </select>
+
+                  <div id="pokemon1Details" class="pokemon-details text-center">
+                     <div class="pokemon-placeholder">
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+                           alt="Select a Pokémon" width="120">
+                        <p>Select a Pokémon to see details</p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div class="col-md-6">
+            <div class="card mb-4">
+               <div class="card-header bg-danger text-white">
+                  <h5 class="card-title mb-0">Pokémon 2</h5>
+               </div>
+               <div class="card-body">
+                  <select id="pokemon2Select" class="form-select mb-3">
+                     <option value="">Select a Pokémon</option>
+                  </select>
+
+                  <div id="pokemon2Details" class="pokemon-details text-center">
+                     <div class="pokemon-placeholder">
+                        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+                           alt="Select a Pokémon" width="120">
+                        <p>Select a Pokémon to see details</p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="text-center mb-5">
+         <button id="startBattleBtn" class="btn btn-success btn-lg" disabled>Start Battle</button>
+         <button id="randomSelectBtn" class="btn btn-info btn-lg ms-2">Random Selection</button>
+      </div>
+
+      <div id="battleResult" class="card mb-5 d-none">
+         <div class="card-header">
+            <h5 class="card-title mb-0">Battle Result</h5>
+         </div>
+         <div class="card-body">
+            <div id="battleHeader" class="text-center mb-4">
+               <!-- Filled via JavaScript -->
+            </div>
+
+            <div id="battleLog" class="battle-log mb-4">
+               <!-- Filled via JavaScript -->
+            </div>
+
+            <div id="battleSummary" class="alert alert-success text-center">
+               <!-- Filled via JavaScript -->
+            </div>
+
+            <div class="text-center">
+               <button id="newBattleBtn" class="btn btn-primary">New Battle</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <footer class="bg-dark text-white text-center py-3 mt-5">
+      &copy; 2023 Pokémon Battle Simulator | Not affiliated with Nintendo or The Pokémon Company
+   </footer>
+
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+   <script>
+      let allPokemon = [];
+
+      document.addEventListener('DOMContentLoaded', function () {
+         const pokemon1Select = document.getElementById('pokemon1Select');
+         const pokemon2Select = document.getElementById('pokemon2Select');
+         const startBattleBtn = document.getElementById('startBattleBtn');
+         const randomSelectBtn = document.getElementById('randomSelectBtn');
+         const newBattleBtn = document.getElementById('newBattleBtn');
+
+         // Load Pokémon list
+         fetch('/api/pokemon')
+            .then(response => response.json())
+            .then(pokemon => {
+               allPokemon = pokemon;
+
+               // Sort by Pokédex ID
+               allPokemon.sort((a, b) => a.pokedex_id - b.pokedex_id);
+
+               // Fill selects
+               allPokemon.forEach(p => {
+                  const option1 = document.createElement('option');
+                  option1.value = p.name;
+                  option1.textContent = `#${p.pokedex_id} - ${p.name}`;
+                  pokemon1Select.appendChild(option1);
+
+                  const option2 = document.createElement('option');
+                  option2.value = p.name;
+                  option2.textContent = `#${p.pokedex_id} - ${p.name}`;
+                  pokemon2Select.appendChild(option2);
+               });
+
+               // ADDED CODE: Check for random battle results from session storage
+               const battleResultJson = sessionStorage.getItem('battleResult');
+               if (battleResultJson && new URLSearchParams(window.location.search).get('random') === 'true') {
+                  try {
+                     const result = JSON.parse(battleResultJson);
+                     displayBattleResult(result);
+                     // Clear session storage
+                     sessionStorage.removeItem('battleResult');
+
+                     // Find the Pokémon in the dropdowns and select them
+                     if (allPokemon.length > 0) {
+                        const p1 = allPokemon.find(p => p.name === result.pokemon1.name);
+                        const p2 = allPokemon.find(p => p.name === result.pokemon2.name);
+
+                        if (p1) {
+                           pokemon1Select.value = p1.name;
+                           pokemon1Select.dispatchEvent(new Event('change'));
+                        }
+
+                        if (p2) {
+                           pokemon2Select.value = p2.name;
+                           pokemon2Select.dispatchEvent(new Event('change'));
+                        }
+                     }
+                  } catch (e) {
+                     console.error('Error displaying random battle:', e);
+                  }
+               }
+            })
+            .catch(error => console.error('Error loading Pokémon:', error));
+
+         // Event listeners for Pokémon selection
+         pokemon1Select.addEventListener('change', function () {
+            if (this.value) {
+               const selectedPokemon = allPokemon.find(p => p.name === this.value);
+               displayPokemonDetails(selectedPokemon, 'pokemon1Details');
+               checkBattleReady();
+            } else {
+               document.getElementById('pokemon1Details').innerHTML = `
+                        <div class="pokemon-placeholder">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" alt="Select a Pokémon" width="120">
+                            <p>Select a Pokémon to see details</p>
+                        </div>
+                    `;
+               checkBattleReady();
+            }
+         });
+
+         pokemon2Select.addEventListener('change', function () {
+            if (this.value) {
+               const selectedPokemon = allPokemon.find(p => p.name === this.value);
+               displayPokemonDetails(selectedPokemon, 'pokemon2Details');
+               checkBattleReady();
+            } else {
+               document.getElementById('pokemon2Details').innerHTML = `
+                        <div class="pokemon-placeholder">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" alt="Select a Pokémon" width="120">
+                            <p>Select a Pokémon to see details</p>
+                        </div>
+                    `;
+               checkBattleReady();
+            }
+         });
+
+         // Start battle
+         startBattleBtn.addEventListener('click', function () {
+            const pokemon1 = pokemon1Select.value;
+            const pokemon2 = pokemon2Select.value;
+
+            if (!pokemon1 || !pokemon2) {
+               alert('Select two Pokémon to battle!');
+               return;
+            }
+
+            fetch('/api/battle', {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json'
+               },
+               body: JSON.stringify({ pokemon1, pokemon2 })
+            })
+               .then(response => response.json())
+               .then(result => {
+                  displayBattleResult(result);
+               })
+               .catch(error => console.error('Error starting battle:', error));
+         });
+
+         // Random selection
+         randomSelectBtn.addEventListener('click', function () {
+            if (allPokemon.length < 2) return;
+
+            const randomIndexes = getRandomPokemonIndexes();
+
+            pokemon1Select.value = allPokemon[randomIndexes[0]].name;
+            pokemon1Select.dispatchEvent(new Event('change'));
+
+            pokemon2Select.value = allPokemon[randomIndexes[1]].name;
+            pokemon2Select.dispatchEvent(new Event('change'));
+         });
+
+         // New battle
+         newBattleBtn.addEventListener('click', function () {
+            document.getElementById('battleResult').classList.add('d-none');
+            pokemon1Select.value = '';
+            pokemon2Select.value = '';
+            pokemon1Select.dispatchEvent(new Event('change'));
+            pokemon2Select.dispatchEvent(new Event('change'));
+            startBattleBtn.disabled = true;
+         });
+
+         // Helper functions
+         function displayPokemonDetails(pokemon, elementId) {
+            const detailsElement = document.getElementById(elementId);
+
+            const typesBadges = pokemon.types.map(type => {
+               const typeClass = `type-${type.toLowerCase()}`;
+               return `<span class="badge ${typeClass}">${type}</span>`;
+            }).join(' ');
+
+            detailsElement.innerHTML = `
+                    <div class="pokemon-card">
+                        <img src="${pokemon.image_url}" alt="${pokemon.name}" class="pokemon-image">
+                        <h4>${pokemon.name}</h4>
+                        <div class="pokemon-types mb-2">
+                            ${typesBadges}
+                        </div>
+                        <div class="pokemon-stats">
+                            <div class="stat-row">
+                                <span class="stat-label">HP:</span>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" style="width: ${pokemon.hp / 2}%" title="${pokemon.hp}"></div>
+                                </div>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Attack:</span>
+                                <div class="progress">
+                                    <div class="progress-bar bg-danger" style="width: ${pokemon.attack / 2}%" title="${pokemon.attack}"></div>
+                                </div>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Defense:</span>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" style="width: ${pokemon.defense / 2}%" title="${pokemon.defense}"></div>
+                                </div>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Speed:</span>
+                                <div class="progress">
+                                    <div class="progress-bar bg-info" style="width: ${pokemon.speed / 2}%" title="${pokemon.speed}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+         }
+
+         function checkBattleReady() {
+            startBattleBtn.disabled = !(pokemon1Select.value && pokemon2Select.value);
+         }
+
+         function getRandomPokemonIndexes() {
+            const index1 = Math.floor(Math.random() * allPokemon.length);
+            let index2 = Math.floor(Math.random() * allPokemon.length);
+
+            // Ensure different Pokémon
+            while (index2 === index1) {
+               index2 = Math.floor(Math.random() * allPokemon.length);
+            }
+
+            return [index1, index2];
+         }
+
+         function displayBattleResult(result) {
+            const battleResult = document.getElementById('battleResult');
+            const battleHeader = document.getElementById('battleHeader');
+            const battleLog = document.getElementById('battleLog');
+            const battleSummary = document.getElementById('battleSummary');
+
+            // Display battle header
+            battleHeader.innerHTML = `
+                    <div class="battle-header">
+                        <div class="pokemon-card mini">
+                            <img src="${result.pokemon1.image_url}" alt="${result.pokemon1.name}" class="pokemon-image small">
+                            <h5>${result.pokemon1.name}</h5>
+                        </div>
+                        <div class="vs-badge">VS</div>
+                        <div class="pokemon-card mini">
+                            <img src="${result.pokemon2.image_url}" alt="${result.pokemon2.name}" class="pokemon-image small">
+                            <h5>${result.pokemon2.name}</h5>
+                        </div>
+                    </div>
+                `;
+
+            // Fill battle log
+            battleLog.innerHTML = '';
+            result.battle_log.forEach(line => {
+               const p = document.createElement('p');
+               p.innerHTML = line;
+               battleLog.appendChild(p);
+            });
+
+            // Show summary
+            battleSummary.innerHTML = `
+                    <h4>Winner: ${result.winner.name}!</h4>
+                    <img src="${result.winner.image_url}" alt="${result.winner.name}" class="pokemon-image winner">
+                `;
+
+            // Show result
+            battleResult.classList.remove('d-none');
+            battleResult.scrollIntoView({ behavior: 'smooth' });
+         }
+      });
+   </script>
+</body>
+
+</html>

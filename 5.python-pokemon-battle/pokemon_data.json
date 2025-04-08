@@ -1,0 +1,204 @@
+[
+   {
+      "name": "Bulbasaur",
+      "types": [
+         "Grass",
+         "Poison"
+      ],
+      "hp": 45,
+      "attack": 49,
+      "defense": 49,
+      "sp_attack": 65,
+      "sp_defense": 65,
+      "speed": 45,
+      "moves": [
+         {
+            "name": "Tackle",
+            "type": "Normal",
+            "category": "Physical",
+            "power": 40
+         },
+         {
+            "name": "Vine Whip",
+            "type": "Grass",
+            "category": "Physical",
+            "power": 45
+         },
+         {
+            "name": "Razor Leaf",
+            "type": "Grass",
+            "category": "Physical",
+            "power": 55
+         },
+         {
+            "name": "Seed Bomb",
+            "type": "Grass",
+            "category": "Physical",
+            "power": 80
+         }
+      ],
+      "image_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
+      "pokedex_id": 1
+   },
+   {
+      "name": "Charmander",
+      "types": [
+         "Fire"
+      ],
+      "hp": 39,
+      "attack": 52,
+      "defense": 43,
+      "sp_attack": 60,
+      "sp_defense": 50,
+      "speed": 65,
+      "moves": [
+         {
+            "name": "Scratch",
+            "type": "Normal",
+            "category": "Physical",
+            "power": 40
+         },
+         {
+            "name": "Ember",
+            "type": "Fire",
+            "category": "Special",
+            "power": 40
+         },
+         {
+            "name": "Flame Burst",
+            "type": "Fire",
+            "category": "Special",
+            "power": 70
+         },
+         {
+            "name": "Flamethrower",
+            "type": "Fire",
+            "category": "Special",
+            "power": 90
+         }
+      ],
+      "image_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png",
+      "pokedex_id": 4
+   },
+   {
+      "name": "Squirtle",
+      "types": [
+         "Water"
+      ],
+      "hp": 44,
+      "attack": 48,
+      "defense": 65,
+      "sp_attack": 50,
+      "sp_defense": 64,
+      "speed": 43,
+      "moves": [
+         {
+            "name": "Tackle",
+            "type": "Normal",
+            "category": "Physical",
+            "power": 40
+         },
+         {
+            "name": "Water Gun",
+            "type": "Water",
+            "category": "Special",
+            "power": 40
+         },
+         {
+            "name": "Bubble Beam",
+            "type": "Water",
+            "category": "Special",
+            "power": 65
+         },
+         {
+            "name": "Hydro Pump",
+            "type": "Water",
+            "category": "Special",
+            "power": 110
+         }
+      ],
+      "image_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png",
+      "pokedex_id": 7
+   },
+   {
+      "name": "Pikachu",
+      "types": [
+         "Electric"
+      ],
+      "hp": 35,
+      "attack": 55,
+      "defense": 40,
+      "sp_attack": 50,
+      "sp_defense": 50,
+      "speed": 90,
+      "moves": [
+         {
+            "name": "Quick Attack",
+            "type": "Normal",
+            "category": "Physical",
+            "power": 40
+         },
+         {
+            "name": "Thunder Shock",
+            "type": "Electric",
+            "category": "Special",
+            "power": 40
+         },
+         {
+            "name": "Thunderbolt",
+            "type": "Electric",
+            "category": "Special",
+            "power": 90
+         },
+         {
+            "name": "Thunder",
+            "type": "Electric",
+            "category": "Special",
+            "power": 110
+         }
+      ],
+      "image_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png",
+      "pokedex_id": 25
+   },
+   {
+      "name": "Charizard",
+      "types": [
+         "Fire",
+         "Flying"
+      ],
+      "hp": 78,
+      "attack": 84,
+      "defense": 78,
+      "sp_attack": 109,
+      "sp_defense": 85,
+      "speed": 100,
+      "moves": [
+         {
+            "name": "Dragon Claw",
+            "type": "Dragon",
+            "category": "Physical",
+            "power": 80
+         },
+         {
+            "name": "Flamethrower",
+            "type": "Fire",
+            "category": "Special",
+            "power": 90
+         },
+         {
+            "name": "Air Slash",
+            "type": "Flying",
+            "category": "Special",
+            "power": 75
+         },
+         {
+            "name": "Fire Blast",
+            "type": "Fire",
+            "category": "Special",
+            "power": 110
+         }
+      ],
+      "image_url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png",
+      "pokedex_id": 6
+   }
+]

@@ -1,0 +1,34 @@
+### Pokémon Battle Simulator API Test Requests
+### Use with VS Code REST Client extension or similar tools
+### Note: This application has a web UI but these API endpoints can be accessed directly
+
+@baseUrl = http://localhost:5000
+
+### Get all Pokémon
+GET {{baseUrl}}/api/pokemon
+Accept: application/json
+
+### Get details for a specific Pokémon by name
+GET {{baseUrl}}/api/pokemon/Pikachu
+Accept: application/json
+
+### Start a random battle
+GET {{baseUrl}}/api/battle/random
+Accept: application/json
+
+### Start a custom battle between two specific Pokémon
+POST {{baseUrl}}/api/battle
+Content-Type: application/json
+
+{
+  "pokemon1": "Charizard",
+  "pokemon2": "Blastoise"
+}
+
+### Get recent battle results
+GET {{baseUrl}}/api/battles/recent
+Accept: application/json
+
+### Get details of a specific battle (replace battle_id with an actual ID)
+GET {{baseUrl}}/api/battle/64a5e8f7c9b1234567890123
+Accept: application/json

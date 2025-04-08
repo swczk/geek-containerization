@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Pokémon Battle Simulator</title>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+   <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+      <div class="container">
+         <a class="navbar-brand" href="/">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"
+               alt="PokéBall" class="nav-logo">
+            Pokémon Battle Simulator
+         </a>
+         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+               <li class="nav-item">
+                  <a class="nav-link active" href="/">Home</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="/battle">Battle</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="/results">Results</a>
+               </li>
+            </ul>
+         </div>
+      </div>
+   </nav>
+
+   <div class="container mt-5">
+      <div class="jumbotron text-center">
+         <h1 class="display-4">Welcome to the Pokémon Battle Simulator!</h1>
+         <p class="lead">Test your skills as a trainer in simulated battles.</p>
+         <hr class="my-4">
+         <p>Choose Pokémon to battle or watch random battles.</p>
+         <a href="/battle" class="btn btn-primary btn-lg me-2">Start Battle</a>
+         <button id="randomBattleBtn" class="btn btn-success btn-lg">Random Battle</button>
+      </div>
+
+      <div class="row mt-5">
+         <div class="col-md-6">
+            <div class="card">
+               <div class="card-header bg-primary text-white">
+                  <h5 class="card-title mb-0">Recent Battles</h5>
+               </div>
+               <div class="card-body">
+                  <ul id="recentBattles" class="list-group">
+                     <li class="list-group-item text-center">Loading...</li>
+                  </ul>
+               </div>
+               <div class="card-footer">
+                  <a href="/results" class="btn btn-outline-primary btn-sm">View All</a>
+               </div>
+            </div>
+         </div>
+         <div class="col-md-6">
+            <div class="card">
+               <div class="card-header bg-info text-white">
+                  <h5 class="card-title mb-0">How It Works</h5>
+               </div>
+               <div class="card-body">
+                  <p>Our simulator uses algorithms based on the official games to calculate:</p>
+                  <ul>
+                     <li>Damage based on stats and types</li>
+                     <li>Type effectiveness</li>
+                     <li>Critical hit chance</li>
+                     <li>Attack order based on speed</li>
+                  </ul>
+                  <p>Battles are determined by Pokémon statistics and a bit of luck!</p>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <footer class="bg-dark text-white text-center py-3 mt-5">
+      &copy; 2023 Pokémon Battle Simulator | Not affiliated with Nintendo or The Pokémon Company
+   </footer>
+
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+   <script>
+      document.addEventListener('DOMContentLoaded', function () {
+         // Load recent battles
+         fetch('/api/battles/recent')
+            .then(response => response.json())
+            .then(battles => {
+               const recentBattlesList = document.getElementById('recentBattles');
+
+               if (battles.length === 0) {
+                  recentBattlesList.innerHTML = '<li class="list-group-item text-center">No battles recorded</li>';
+                  return;
+               }
+
+               recentBattlesList.innerHTML = '';
+               battles.slice(0, 5).forEach(battle => {
+                  const date = new Date(battle.date);
+                  const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+
+                  const listItem = document.createElement('li');
+                  listItem.className = 'list-group-item';
+                  listItem.innerHTML = `
+                            <strong>${battle.pokemon1}</strong> vs <strong>${battle.pokemon2}</strong><br>
+                            Winner: <span class="text-success">${battle.winner}</span><br>
+                            <small class="text-muted">${formattedDate}</small>
+                        `;
+                  recentBattlesList.appendChild(listItem);
+               });
+            })
+            .catch(error => console.error('Error loading recent battles:', error));
+
+         // Random battle button - MODIFIED CODE
+         document.getElementById('randomBattleBtn').addEventListener('click', function () {
+            // Show loading indicator
+            this.disabled = true;
+            this.innerHTML = 'Loading...';
+
+            // Fetch random battle data instead of navigating to API endpoint
+            fetch('/api/battle/random')
+               .then(response => response.json())
+               .then(result => {
+                  // Store battle result in session storage
+                  sessionStorage.setItem('battleResult', JSON.stringify(result));
+                  // Navigate to battle page to display results
+                  window.location.href = '/battle?random=true';
+               })
+               .catch(error => {
+                  console.error('Error starting random battle:', error);
+                  alert('Error starting battle');
+                  this.disabled = false;
+                  this.innerHTML = 'Random Battle';
+               });
+         });
+      });
+   </script>
+</body>
+
+</html>
