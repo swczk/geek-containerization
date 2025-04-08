@@ -1,0 +1,40 @@
+### Star Trek Stardate Converter API Test Requests
+### Use with VS Code REST Client extension or similar tools
+
+@baseUrl = http://localhost:8000
+
+### Welcome message and API information
+GET {{baseUrl}}/
+Accept: application/json
+
+### Get all available stardate systems
+GET {{baseUrl}}/api/systems
+Accept: application/json
+
+### Convert current Earth date to all stardate formats
+GET {{baseUrl}}/api/current
+Accept: application/json
+
+### Convert a specific Earth date to stardates
+POST {{baseUrl}}/api/stardate
+Content-Type: application/json
+
+{
+  "date": "2023-06-16"
+}
+
+### Convert another specific date
+POST {{baseUrl}}/api/stardate
+Content-Type: application/json
+
+{
+  "date": "1966-09-08"
+}
+
+### Convert date in different format
+POST {{baseUrl}}/api/stardate
+Content-Type: application/json
+
+{
+  "date": "08/05/1977"
+}
